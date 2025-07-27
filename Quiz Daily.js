@@ -1,4 +1,3 @@
-
 const h3Elem = document.querySelector('h3');
 const ulElem = document.querySelector('ul');
 const boxQuiz = document.querySelector('#boxQuiz');
@@ -6,63 +5,86 @@ const h1 = document.querySelector('h1');
 const pelem = document.querySelector('p');
 const divElem = document.querySelector('div');
 
-
 function quiz(title, options, answer) {
-    return { title, options, answer };
-}
+    return { title, options, answer }
+};
 
 const createQuiz16azar = quiz("روز 16 آذر چه مناسبتی دارد؟", ["روز مادر", "روز دانشجو", "روز پدر", "روز دختر"], "روز دانشجو");
-const createQuiz13aban = quiz("روز 13 آبان چه مناسبتی دارد؟", ["روز مادر", "روز طبیعت", "روز ارتش", "روز دانش‌آموز"], "روز دانش‌آموز");
+const createQuiz13aban = quiz('روز 13 ابان چه مناسبتی دارد؟', ["روز مادر", "روز طبیعت", "روز ارتش", "روز دانش اموز"], "روز دانش اموز")
 
-// متغیر وضعیت
-let flagAnswer = false;
+setInterval(() => {
+    const time = new Date()
+    let fullTime = time.toLocaleTimeString()
+    pelem.innerHTML = fullTime
+}, 1000);
 
-
-// توابع کمکی
 function showTime() {
-    const timeFull = new Date();
+    const timeFull = new Date()
     let timeHour = timeFull.getHours().toString().padStart(2, '0');
     let timeMin = timeFull.getMinutes().toString().padStart(2, '0');
-    return timeHour + ":" + timeMin;
-}
+    let startQuiz = timeHour + ":" + timeMin;
+    return startQuiz;
+};
 
+let flagAnswer = false;
 
-// توابع اصلی برای نمایش کوییز
 function convertDom() {
     ulElem.innerHTML = '';
+    h1.innerHTML = '';
     h1.innerHTML = '.بعد از 5 دقیقه ازمون بسته میشود';
-    const currentQuiz = flagAnswer ? createQuiz13aban : createQuiz16azar;
-    flagAnswer = !flagAnswer;
+    if (flagAnswer) {
+        flagAnswer = false
+        h3Elem.textContent = createQuiz13aban.title;
+        for (let item of createQuiz13aban.options) {
+            let liElem = document.createElement('li');
+            liElem.textContent = item;
+            ulElem.append(liElem);
+            liElem.addEventListener('click', (e) => {
+                if (e.target.textContent !== createQuiz13aban.answer) {
+                    divElem.innerHTML = "پاسخ صحیح گزینه دانش اموز است";
+                    setTimeout(() => {
+                        divElem.innerHTML = '';
+                    }, 2000);
+                } else {
+                    divElem.innerHTML = "پاسخ صحیح است";
+                    setTimeout(() => {
+                        divElem.innerHTML = '';
+                    }, 2000);
+                };
+            });
+        };
+    } else {
+        flagAnswer = true;
+        h3Elem.textContent = createQuiz16azar.title;
+        for (let item of createQuiz16azar.options) {
+            let liElem = document.createElement('li');
+            liElem.textContent = item;
+            ulElem.append(liElem);
+            liElem.addEventListener('click', (e) => {
+                if (e.target.textContent !== createQuiz16azar.answer) {
+                    divElem.innerHTML = "روز دانشجو";
+                    setTimeout(() => {
+                        divElem.innerHTML = '';
+                    }, 2000);
+                } else {
+                    divElem.innerHTML = "پاسخ صحیح است";
+                    setTimeout(() => {
+                        divElem.innerHTML = '';
+                    }, 2000);
+                }
+            })
+        };
+    };
+};
 
-    h3Elem.textContent = currentQuiz.title;
 
-    for (let item of currentQuiz.options) {
-        let liElem = document.createElement('li');
-        liElem.textContent = item;
-        ulElem.append(liElem);
-
-        liElem.addEventListener('click', (e) => {
-            if (e.target.textContent !== currentQuiz.answer) {
-                divElem.innerHTML = `پاسخ صحیح گزینه ${currentQuiz.answer} است`;
-            } else {
-                divElem.innerHTML = "پاسخ صحیح است";
-            }
-            setTimeout(() => {
-                divElem.innerHTML = '';
-            }, 2000);
-        });
-    }
-}
-
-
-// مدیریت زمان آزمون
 function timeHandlerQuiz() {
     const currentTime = showTime();
     const [currentHours, currentMinutes] = currentTime.split(':').map(Number);
     const currentTotalMinutes = currentHours * 60 + currentMinutes;
 
-    const quizStartTime = 20 * 60 + 5;
-    const quizEndTime = 21 * 60 + 0;
+    const quizStartTime = 19 * 60 + 49;  
+    const quizEndTime = 19 * 60 + 48;  
 
     if (currentTotalMinutes >= quizEndTime) {
         console.log('زمان اتمام آزمون');
@@ -77,17 +99,17 @@ function timeHandlerQuiz() {
     }
 }
 
+
 ///اجراش باگ داره
 
-// اجرا: نمایش ساعت و بررسی زمان آزمون
-setInterval(() => {
-    const time = new Date();
-    pelem.innerHTML = time.toLocaleTimeString();
-    timeHandlerQuiz();
-}, 1000);
+// window.setInterval(() => {
+//     timeHandlerQuiz()
+//     document.querySelector('ul').addEventListener('click', (e) => {
+//         if (e.target.textContent === convertDom()) {
+//             convertDom()
+//         }
+//     })
+// }, 10000)
 
-
-
-
-window.addEventListener('click', convertDom)
+window.addEventListener('click',convertDom)
 
